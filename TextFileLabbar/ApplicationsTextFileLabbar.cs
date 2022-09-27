@@ -21,48 +21,49 @@ namespace TextFileLabbar
             }
             foreach (var row in File.ReadLines("username.txt"))
             {
-                if (row.Contains(username))
+                var splitter = row.IndexOf('_');
+                if (splitter != -1)
                 {
-                    if (File.Exists("passwords.txt"))
+                    var un = row.Substring(0, splitter);
+                    var pwd = row.Substring(splitter + 1);
+                    if (un == username && pwd == password)
                     {
-
+                        return true;
                     }
                 }
-                
-
             }
-
-
-
-            return 
+            return false;
         }
 
         public bool UserNameExists(string username)
         {
-            if (!File.Exists("usernames.txt"))
+            if (!File.Exists("username.txt"))
             {
                 return false;
             }
 
-            foreach (var row in File.ReadLines("usernames.txt"))
+            foreach (var row in File.ReadLines("username.txt"))
             {
-                if (row.Contains(username))
+                var splitter = row.IndexOf('_');
+                if (splitter != -1)
                 {
-                    return true;
+                    var un = row.Substring(0, splitter);
+                    if (un == username)
+                        return true;
                 }
             }
-            return true;
+            return false;
         }
 
         public void Register()
         {
-            bool run = true;
-            while (run)
+            
+            while (true)
             {
-                Console.WriteLine("*** REGISTER ***");
+                Console.WriteLine("*** NEW REGISTRATION ***");
 
                 Console.WriteLine("Ange ett username");
-                string username = Console.ReadLine();
+                var username = Console.ReadLine();
 
                 if (username.Length == 0)
                 {
@@ -78,33 +79,33 @@ namespace TextFileLabbar
 
                 Console.WriteLine("Ange ett password");
 
-                using (var item = File.CreateText("password.txt"))
+                var password = Console.ReadLine();
+                if (password.Length == 0)
                 {
-                    item.NewLine = Console.ReadLine();
+                    Console.WriteLine("Ange ett password tack");
+                    continue;
                 }
-                
+                File.AppendAllLines("username.txt", new List<string> { username + "_" + password });
+
+                break;
             }
-
-
-
-
         }
-
-
         public void Login()
         {
+            Console.WriteLine("*** LOGIN ***");
             Console.WriteLine("Ange ditt username");
+            var username = Console.ReadLine().Trim();
+
             Console.WriteLine("Ange ditt password");
+            var password = Console.ReadLine().Trim();
 
-            using (var item = File.CreateText("UsernameAndPassword.txt"))
+            if (VerifyUserNameAndPassword(username, password))
             {
-
+                Console.WriteLine("Du är inloggad");
             }
-
+            else
+                Console.WriteLine("Fel username eller password");
         }
-
-
-
 
         public void Lab5()
         {
@@ -121,44 +122,17 @@ namespace TextFileLabbar
                 {
                     case "a":
 
-
-
-
-
-
+                        Login();
                         break;
 
                     case "b":
 
-                        using (var file = File.CreateText("UsernamesAndPasswords.txt"))
-                        {
-                            Console.WriteLine("Register:");
-                            Console.WriteLine("Ange username: ");
-
-                            var username = File.AppendText("UsernamesAndPasswords.txt");
-                            username.WriteLine(Console.ReadLine());
-
-                            Console.WriteLine("Ange password: ");
-
-                            var password = File.AppendText("UsernamesAndPasswords.txt");
-                            password.WriteLine(Console.ReadLine());
-
-                        }
-
-
-
-
-
-
-
-
-
+                        Register();
                         break;
 
                     case "q":
 
                         run = false;
-
                         break;
 
                 }
