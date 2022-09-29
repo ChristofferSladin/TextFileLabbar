@@ -7,13 +7,159 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using Newtonsoft.Json;
 
 
 namespace TextFileLabbar
 {
-    internal class ApplicationsTextFileLabbar
+    public class ApplicationsTextFileLabbar
     {
-        public bool VerifyUserNameAndPassword (string username, string password)
+        public List<Car> GetFromFile()
+        {
+            var listOfCars = new List<Car>();
+            if (!File.Exists("Cars.txt"))
+            {
+                return listOfCars;
+            }
+
+            var text = File.ReadAllText("Cars.txt");
+            listOfCars = JsonConvert.DeserializeObject<List<Car>>(text);
+
+            return listOfCars;
+        }
+        public void SaveCar(List<Car> listOfCars)
+        {
+            var text = JsonConvert.SerializeObject(listOfCars);
+
+            using (var file = File.CreateText("Cars.txt"))
+            {
+                file.Write(text);
+            }
+        }
+        public string RemoveCar()
+        {
+
+
+            int b = 0;
+
+
+            return b.ToString();
+        }
+        public Car CreateCar()
+        {
+            Console.Write("Ange Namn: ");
+            string Name = Console.ReadLine();
+
+            Console.Write("Ange Model: ");
+            string Model = Console.ReadLine();
+
+            Console.Write("Ange År: ");
+            int Year = int.Parse(Console.ReadLine());
+
+            Console.Write("Ange Pris: ");
+            int Price = int.Parse(Console.ReadLine());
+
+            var car = new Car();
+            car.Name = Name;
+            car.Model = Model;
+            car.Year = Year;
+            car.Price = Price;
+
+            return car;
+        }
+        public int GetIntInput(string prompt, int minValue, int maxValue)
+        {
+            while (true)
+            {
+                Console.WriteLine(prompt);
+                try
+                {
+                    int sel = Convert.ToInt32(Console.ReadLine());
+                    if (sel < minValue || sel > maxValue)
+                        Console.WriteLine($"Mata in ett tal mellan {minValue} och {maxValue} tack");
+
+                    else
+                        return sel;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Mata in siffror tack");
+                }
+            }
+        }
+        public void Lab7()
+        {
+            bool run = true;
+            while (run)
+            {
+                var menyVal = GetIntInput("Ange menyval\n1. Skapa Bil\n2. Ta Bort Bil\n3. Exit And Save", 1, 3);
+
+                switch (menyVal)
+                {
+                    case 1:
+                        
+                        CreateCar();
+
+                        break;
+
+                    case 2:
+
+                        break;
+
+                    case 3:
+
+                        var listOfCars = GetFromFile();
+
+                        SaveCar(listOfCars);
+
+                        run = false;
+
+
+                        break;
+                }
+            }
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public void Lab6()
+        {
+
+            Console.Write("Ange path ->");
+            var path = Console.ReadLine();
+            Console.Write("Ange del av filnamn att söka efter ->");
+            var fileNamePart = Console.ReadLine();
+
+            foreach (var filePath in Directory.GetFiles(path))
+            {
+                var fileName = Path.GetFileName(filePath);
+                if (fileName.ToLower().Contains(fileNamePart.ToLower()))
+                {
+                    var size = new FileInfo(filePath).Length;
+                    Console.WriteLine($"{fileName} - bytes = {size}");
+                }
+            }
+        }
+
+
+        public bool VerifyUserNameAndPassword(string username, string password)
         {
             if (!File.Exists("username.txt"))
             {
@@ -57,7 +203,7 @@ namespace TextFileLabbar
 
         public void Register()
         {
-            
+
             while (true)
             {
                 Console.WriteLine("*** NEW REGISTRATION ***");
@@ -204,7 +350,9 @@ namespace TextFileLabbar
             //Lab2();
             //Lab3();
             //Lab4();
-            Lab5();
+            //Lab5();
+            //Lab6();
+            Lab7();
 
         }
     }
